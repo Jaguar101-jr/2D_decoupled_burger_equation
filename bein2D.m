@@ -15,7 +15,7 @@ clear;
 
 %% Domain
 % Space
-Lx=10;
+Lx=7;
 Ly=10;
 dx=0.2; dy=dx;
 nx=fix(Lx/dx);
@@ -26,7 +26,7 @@ Y=linspace(0, Ly, ny);
 x=x'; y=y';
 
 %% Propagation Time
-T=15;
+T=18;
 
 %% Field Arrays
 % Variables
@@ -42,7 +42,7 @@ K=zeros(nx,ny);
 t=0;
 C(:)=0;
 u(:)=1.5;
-v=0.1+0.01*(y-Ly)+sin(4*pi*x/Lx);
+v=0.1+0.01*(y-Ly)+cos(4*pi*x/Lx);
 
 CFL=0.1;
 dt=CFL*min(dx./abs(u(:)) + dy./abs(v(:)));
@@ -50,19 +50,19 @@ dt=CFL*min(dx./abs(u(:)) + dy./abs(v(:)));
 
 %% Time stepping while Loop
 while (t < T)
-    % B.C.
+    % Zero B.C.
     C(:,[1 end]) = C(:,[2 end-1]);
     C([1 end],:) = C([2 end-1],:);
 
-    % Source
+    % Oscilation Source
     if t < 2
         C(4,12)=C(4,12)+dt+50;
     end
 
-    % Solution
+    % Conventional Space-Time Descritized Solution
     t=t+dt;
     Cn=C;
-    for i=2:nx-1,  for j=2:ny-1
+    for i=2:nx-1,  for j=2:ny-1 
         % Advection term
         A = u(i,j)*(Cn(i+1,j) - Cn(i-1,j))/(2*dx)  ...
           + v(i,j)*(Cn(i,j+1) - Cn(i,j-1))/(2*dy);
@@ -76,12 +76,15 @@ while (t < T)
 
 % Visualize at selected steps
 clf;
-imagesc(X, Y, C'); colorbar;
+imagesc(X, Y, C');
+colorbar; 
+c = colorbar;
+c.Label.String = 'Velocity Field (unit/sec.)';
 hold on
 quiver(x,y,u,v);
 hold off;
 set(gca, 'ydir', 'norm');
-title(sprintf('propagation_time = %.2f' , t));
+title(sprintf('propagation time = %.2f' , t));
 axis([0 Lx 0 Ly]);
 xlabel('horizental axis');
 ylabel('vertical axis');

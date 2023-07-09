@@ -1,4 +1,4 @@
-%% This code is for the 2D decoupled burgers' equation
+%% This code is for the 2D advection-diffusion equation or Burgers' Equ.
 %% A Matlab code written by and developed by HUSSEIN A. H. Muhammed Nov.-Dec. 2022.
 %% B.Sc.H AND M.Sc. (Honuors).
 %% This code generates a video file that simulates the simplest form of Navier-Stocks' Equ. in Cartesian coordinate system
@@ -6,8 +6,11 @@
 
 clear;
 
-% Equation
-% Ct = -uCx - vCy + KCxx + KCyy + qc
+%%Equation
+%% Ct = K*[ Cxx + Cyy ] - u [Cx + Cy] + qc
+%% where C is the scalar quantity being transported,
+%% K=diffusion coefficient;  u  is the velocity
+%% components in the x and y directions, which is equal. 
 
 %% Prepare the movie file
     vidObj = VideoWriter('BE-2d.avi');
@@ -26,7 +29,7 @@ Y=linspace(0, Ly, ny);
 x=x'; y=y';
 
 %% Propagation Time
-T=18;
+T=8;
 
 %% Field Arrays
 % Variables
@@ -42,9 +45,9 @@ K=zeros(nx,ny);
 t=0;
 C(:)=0;
 u(:)=1.5;
-v=0.1+0.01*(y-Ly)+cos(4*pi*x/Lx);
+v=0.3+0.01*(y-Ly)+cos(4*pi*x/Lx);
 
-CFL=0.1;
+CFL=0.5;
 dt=CFL*min(dx./abs(u(:)) + dy./abs(v(:)));
 
 
@@ -70,8 +73,8 @@ while (t < T)
         D = K(i,j)*(Cn(i+1,j)-2*Cn(i,j)+Cn(i-1,j))/dx^2 ...
           + K(i,j)*(Cn(i,j+1)-2*Cn(i,j)+Cn(i,j-1))/dy^2;
         % Euler's Method
-        C(i,j) = Cn(i,j) + dt*(-A + D);
-        if C(i,j) < 0; C(i,j)=0; end                               % avoid negative velocity values
+        C(i,j) = Cn(i,j) + dt*(-A + D);            % avoid negative velocity values
+        if C(i,j) < 0; C(i,j)=0; end
     end,  end
 
 % Visualize at selected steps
@@ -100,5 +103,3 @@ end
 
 %% Close the file
 close(vidObj);
-
-

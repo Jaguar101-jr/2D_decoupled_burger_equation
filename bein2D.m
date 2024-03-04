@@ -3,6 +3,7 @@
 %% B.Sc.H AND M.Sc. (Honuors).
 %% This code generates a video file that simulates the simplest form of Navier-Stocks' Equ. in Cartesian coordinate system
 %% Using Advection and Diffusion forces. Thanks is to Dr. Haroon Stephen (UNLV-Las Vegas, USA).
+% Lastest update 04. Mar. 2024
 
 clear;
 
@@ -12,9 +13,9 @@ clear;
 %% K=diffusion coefficient;  u  is the velocity
 %% components in the x and y directions, which is equal. 
 
-%% Prepare the movie file
-    vidObj = VideoWriter('BE-2d.avi');
-    open(vidObj);
+% %% Prepare the movie file
+%     vidObj = VideoWriter('BE-2d.avi');
+%     open(vidObj);
 
 %% Domain
 % Space
@@ -77,29 +78,48 @@ while (t < T)
         if C(i,j) < 0; C(i,j)=0; end
     end,  end
 
-% Visualize at selected steps
+%% 2D Visualize at selected steps
+% clf;
+% imagesc(X, Y, C');
+% colorbar; 
+% c = colorbar;
+% c.Label.String = 'Velocity Field (unit/sec.)';
+% hold on
+% quiver(x,y,u,v);
+% hold off;
+% set(gca, 'ydir', 'norm');
+% title(sprintf('propagation time = %.2f' , t));
+% axis([0 Lx 0 Ly]);
+% xlabel('horizental axis');
+% ylabel('vertical axis');
+% zlabel('velocity field axis');
+% legend;
+% shg; pause(0.1);
+
+%% 3D Visualize at selected steps
 clf;
-imagesc(X, Y, C');
-colorbar; 
+surf(X, Y, C');  % Create 3D surface plot
+colorbar;
 c = colorbar;
 c.Label.String = 'Velocity Field (unit/sec.)';
-hold on
-quiver(x,y,u,v);
+hold on;
+quiver3(x, y, zeros(size(u)), u, v, zeros(size(v)), 'k');  % Plot velocity vectors on the surface
 hold off;
-set(gca, 'ydir', 'norm');
-title(sprintf('propagation time = %.2f' , t));
-axis([0 Lx 0 Ly]);
-xlabel('horizental axis');
-ylabel('vertical axis');
-zlabel('velocity field axis');
-legend;
-shg; pause(0.1);
+title(sprintf('Propagation Time = %.2f', t));
+xlabel('Horizontal Axis');
+ylabel('Vertical Axis');
+zlabel('Velocity Field Axis');
+axis([0 Lx 0 Ly min(min(C)) max(max(C))]);  % Set axis limits
+legend('Velocity Vectors');
+shg;
+pause(0.1);
 
- % Write each frame to the file
-       currFrame = getframe(gcf);
-       writeVideo(vidObj,currFrame);
+
+ % % Write each frame to the file
+ %       currFrame = getframe(gcf);
+ %       writeVideo(vidObj,currFrame);
 end
 
 
-%% Close the file
-close(vidObj);
+% %% Close the file
+% close(vidObj);
